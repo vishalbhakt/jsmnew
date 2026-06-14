@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../hooks/useAuth";
+import { getErrorMessage } from "../services/api";
 
 const initialForm = {
   first_name: "",
@@ -31,8 +32,7 @@ export default function Register() {
       await register(form);
       navigate("/login");
     } catch (err) {
-      const data = err.response?.data;
-      setMessage(typeof data === "object" ? Object.values(data).flat().join(" ") : "Registration failed.");
+      setMessage(getErrorMessage(err, "Registration failed."));
     }
   }
 

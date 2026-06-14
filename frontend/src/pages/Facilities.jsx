@@ -2,12 +2,11 @@ import { Library, LineChart, Monitor, ShieldCheck } from "lucide-react";
 
 import PageHeader from "../components/PageHeader";
 import { useResource } from "../hooks/useResource";
-import { facilities } from "../utils/fixtures";
 
 const iconMap = { Monitor, Library, LineChart, ShieldCheck };
 
 export default function Facilities() {
-  const { rows } = useResource("/facilities/", facilities);
+  const { rows } = useResource("/facilities/");
 
   return (
     <section className="page-band bg-white">
@@ -30,6 +29,7 @@ export default function Facilities() {
               </article>
             );
           })}
+          {rows.length === 0 && <p className="text-slate-500">No facilities available.</p>}
         </div>
       </div>
     </section>

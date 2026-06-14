@@ -1,6 +1,8 @@
-from django.db.models import Q
+from django.db.models import Q, Count, Avg
+from django.utils import timezone
 from rest_framework import generics, permissions, viewsets
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import StudentProfile, TeacherProfile, User
@@ -14,8 +16,89 @@ from .serializers import (
 )
 
 
+class DashboardStatsView(APIView):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        role = getattr(user, 'role', 'student')
+        
+        # We will import models here to prevent circular imports
+        from academics.models import Assessment
+        from attendance.models import AttendanceRecord
+        from finance.models import Payment
+        from learning.models import Assignment, AssignmentSubmission
+        from communication.models import Announcement
+        
+        stats = []
+        today_events = []
+        
+        if role == 'admin':
+            student_count = StudentProfile.objects.count()
+            teacher_count = TeacherProfile.objects.count()
+            total_payments = Payment.objects.filter(status='paid').count()
+            total_pending = Payment.objects.filter(status='pending').count()
+            fee_perc = int((total_payments / (total_payments + total_pending) * 100)) if (total_payments + total_pending) > 0 else 0
+            
+            stats = [
+                {"label": "Students", "value": str(student_count), "trend": "Total enrolled"},
+                {"label": "Teachers", "value": str(teacher_count), "trend": "Total staff"},
+                {"label": "Fee Collection", "value": f"{fee_perc}%", "trend": "Paid vs Pending"},
+                {"label": "System Users", "value": str(User.objects.count()), "trend": "Total accounts"},
+            ]
+            for ann in Announcement.objects.order_by('-created_at')[:2]:
+                today_events.append(["Announcement", ann.title])
+                
+        elif role == 'teacher':
+            try:
+                tp = user.teacher_profile
+                assigned_students = StudentProfile.objects.filter(
+                    Q(classroom__class_teacher=tp) | Q(classroom__subjects__teacher=tp)
+                ).distinct().count()
+                assignments = Assignment.objects.filter(subject__teacher=tp).count()
+                subs = AssignmentSubmission.objects.filter(assignment__subject__teacher=tp, status='submitted').count()
+                
+                stats = [
+                    {"label": "Assigned Students", "value": str(assigned_students), "trend": "In your classes"},
+                    {"label": "Assignments", "value": str(assignments), "trend": "Created by you"},
+                    {"label": "Pending Reviews", "value": str(subs), "trend": "To be graded"},
+                    {"label": "Classes", "value": str(tp.classrooms.count() if hasattr(tp, 'classrooms') else 0), "trend": "As class teacher"},
+                ]
+            except Exception:
+                pass
+                
+        else: # student
+            try:
+                sp = user.student_profile
+                pending_assignments = Assignment.objects.filter(subject__classroom=sp.classroom).count() - AssignmentSubmission.objects.filter(student=sp).count()
+                pending_fees = Payment.objects.filter(student=sp, status='pending').count()
+                
+                stats = [
+                    {"label": "Pending Assignments", "value": str(pending_assignments), "trend": "To complete"},
+                    {"label": "Pending Fees", "value": str(pending_fees), "trend": "Unpaid invoices"},
+                    {"label": "Attendance", "value": "N/A", "trend": "Current term"},
+                    {"label": "Profile", "value": "Active", "trend": sp.roll_number},
+                ]
+            except Exception:
+                pass
+
+        # Dummy performance data for visual effect since we don't have enough historical data seeded
+        performance = [
+            {"name": "Jan", "attendance": 90, "results": 75, "fees": 60},
+            {"name": "Feb", "attendance": 92, "results": 80, "fees": 70},
+            {"name": "Mar", "attendance": 95, "results": 85, "fees": 80},
+        ]
+
+        if not today_events:
+            today_events.append(["System", "Welcome to JSM Dashboard"])
+            
+        return Response({
+            "stats": stats,
+            "performance": performance,
+            "today": today_events
+        })
+
 class TokenPairView(TokenObtainPairView):
     serializer_class = TokenPairSerializer
+    permission_classes = [permissions.AllowAny]
 
 
 class RegisterView(generics.CreateAPIView):

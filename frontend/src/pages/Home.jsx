@@ -2,7 +2,7 @@ import { ArrowRight, BarChart3, BookOpenCheck, ShieldCheck, Users } from "lucide
 import { Link } from "react-router-dom";
 
 import heroImage from "../assets/academy-hero.png";
-import { facilities, publicCourses } from "../utils/fixtures";
+import { useResource } from "../hooks/useResource";
 
 const highlights = [
   { label: "Role-Based Portals", icon: Users },
@@ -12,6 +12,9 @@ const highlights = [
 ];
 
 export default function Home() {
+  const { rows: courses } = useResource("/courses/");
+  const { rows: facilities } = useResource("/facilities/");
+
   return (
     <>
       <section className="relative min-h-[76vh] overflow-hidden bg-slate-950 text-white">
@@ -64,13 +67,14 @@ export default function Home() {
             <h2 className="mt-2 text-3xl font-black text-slate-950">Structured learning for every stage</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
-            {publicCourses.map((course) => (
-              <article key={course.id} className="panel p-6">
-                <p className="text-sm font-black text-amber-700">{course.grade_range}</p>
+            {courses.map((course) => (
+              <article key={course.id || course.slug} className="panel p-6">
+                <p className="text-sm font-black text-amber-700">{course.grade_range || "General"}</p>
                 <h3 className="mt-3 text-xl font-black text-slate-950">{course.title}</h3>
                 <p className="mt-3 text-sm leading-6 text-slate-600">{course.description}</p>
               </article>
             ))}
+            {courses.length === 0 && <p className="text-slate-500">No academic programs listed.</p>}
           </div>
         </div>
       </section>
@@ -92,6 +96,7 @@ export default function Home() {
                 <p className="mt-2 text-sm leading-6 text-slate-600">{item.description}</p>
               </div>
             ))}
+            {facilities.length === 0 && <p className="text-slate-500">No facilities listed.</p>}
           </div>
         </div>
       </section>

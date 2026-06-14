@@ -2,7 +2,7 @@ import { Clock3, Mail, MapPin, MessageSquareMore, Phone, Send } from "lucide-rea
 import { useState } from "react";
 
 import PageHeader from "../components/PageHeader";
-import { createResource } from "../services/api";
+import { createResource, getErrorMessage } from "../services/api";
 
 const initialForm = {
   name: "",
@@ -63,7 +63,7 @@ export default function Contact() {
     } catch (error) {
       setFeedback({
         tone: "error",
-        text: error.response?.data?.detail || "Unable to send your message right now.",
+        text: getErrorMessage(error, "Unable to send your message right now."),
       });
     } finally {
       setSaving(false);

@@ -26,6 +26,9 @@ const navByRole = {
     { to: "/dashboard/attendance", label: "Attendance", icon: ClipboardCheck },
     { to: "/dashboard/results", label: "Results", icon: Bell },
     { to: "/dashboard/payments", label: "Payments", icon: CreditCard },
+    { to: "/dashboard/announcements", label: "Announcements", icon: Bell },
+    { to: "/dashboard/notifications", label: "Notifications", icon: Bell },
+    { to: "/dashboard/profile", label: "My Profile", icon: Settings },
   ],
   teacher: [
     { to: "/dashboard", label: "Overview", icon: LayoutDashboard, end: true },
@@ -34,12 +37,38 @@ const navByRole = {
     { to: "/dashboard/assignments", label: "Assignments", icon: BookOpen },
     { to: "/dashboard/notes", label: "Notes", icon: FileText },
     { to: "/dashboard/videos", label: "Videos", icon: PlaySquare },
+    { to: "/dashboard/results", label: "Results", icon: Bell },
+    { to: "/dashboard/announcements", label: "Announcements", icon: Bell },
+    { to: "/dashboard/notifications", label: "Notifications", icon: Bell },
+    { to: "/dashboard/profile", label: "My Profile", icon: Settings },
   ],
   admin: [
     { to: "/dashboard", label: "Overview", icon: LayoutDashboard, end: true },
     { to: "/dashboard/users", label: "Users", icon: Users },
-    { to: "/dashboard/fees", label: "Fees", icon: CreditCard },
-    { to: "/dashboard/cms", label: "CMS", icon: Settings },
+    { to: "/dashboard/students", label: "Students", icon: Users },
+    { to: "/dashboard/teachers", label: "Teachers", icon: Users },
+    { to: "/dashboard/classes", label: "Classes", icon: BookOpen },
+    { to: "/dashboard/subjects", label: "Subjects", icon: BookOpen },
+    { to: "/dashboard/assessments", label: "Assessments", icon: BookOpen },
+    { to: "/dashboard/attendance-sessions", label: "Att. Sessions", icon: ClipboardCheck },
+    { to: "/dashboard/attendance", label: "Att. Records", icon: ClipboardCheck },
+    { to: "/dashboard/assignments", label: "Assignments", icon: BookOpen },
+    { to: "/dashboard/submissions", label: "Submissions", icon: BookOpen },
+    { to: "/dashboard/notes", label: "Notes", icon: FileText },
+    { to: "/dashboard/videos", label: "Videos", icon: PlaySquare },
+    { to: "/dashboard/quizzes", label: "Quizzes", icon: PlaySquare },
+    { to: "/dashboard/results", label: "Results", icon: Bell },
+    { to: "/dashboard/fees", label: "Fee Plans", icon: CreditCard },
+    { to: "/dashboard/payments", label: "Payments", icon: CreditCard },
+    { to: "/dashboard/announcements", label: "Announcements", icon: Bell },
+    { to: "/dashboard/notifications", label: "Notifications", icon: Bell },
+    { to: "/dashboard/activity-logs", label: "Activity Logs", icon: Settings },
+    { to: "/dashboard/pages", label: "Pages", icon: FileText },
+    { to: "/dashboard/cms-courses", label: "Courses", icon: Settings },
+    { to: "/dashboard/cms-facilities", label: "Facilities", icon: Settings },
+    { to: "/dashboard/gallery", label: "Gallery", icon: Settings },
+    { to: "/dashboard/contact-messages", label: "Contact Msg", icon: Settings },
+    { to: "/dashboard/cms", label: "Inquiries", icon: Settings },
     { to: "/dashboard/reports", label: "Reports", icon: ClipboardCheck },
   ],
 };
@@ -97,7 +126,7 @@ export default function DashboardLayout() {
 
       <div className="grid lg:grid-cols-[280px_1fr]">
         <aside
-          className={`fixed inset-y-0 left-0 z-50 w-72 border-r border-slate-200 bg-white p-5 transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
+          className={`fixed inset-y-0 left-0 z-50 w-72 overflow-y-auto border-r border-slate-200 bg-white p-5 transition-transform lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
             open ? "translate-x-0" : "-translate-x-full"
           }`}
         >

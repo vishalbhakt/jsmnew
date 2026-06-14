@@ -13,13 +13,13 @@ from finance.views import FeePlanViewSet, PaymentViewSet
 from learning.views import AssignmentSubmissionViewSet, AssignmentViewSet, NoteViewSet, QuizViewSet, VideoLectureViewSet
 from users.views import (
     CurrentUserView,
+    DashboardStatsView,
     RegisterView,
     StudentProfileViewSet,
     TeacherProfileViewSet,
     TokenPairView,
     UserViewSet,
 )
-
 
 router = DefaultRouter()
 router.register("users", UserViewSet, basename="users")
@@ -55,6 +55,7 @@ urlpatterns = [
     path("api/auth/token/", TokenPairView.as_view(), name="token_obtain_pair"),
     path("api/auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api/auth/me/", CurrentUserView.as_view(), name="current_user"),
+    path("api/dashboard/", DashboardStatsView.as_view(), name="dashboard_stats"),
     path("api/", include(router.urls)),
 ]
 

@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import DashboardHome from "./dashboard/DashboardHome";
+import Profile from "./dashboard/Profile";
 import ResourcePage from "./dashboard/ResourcePage";
 import DashboardLayout from "./layouts/DashboardLayout";
 import PublicLayout from "./layouts/PublicLayout";
@@ -227,6 +228,22 @@ export default function App() {
               />
             }
           />
+          {/* Missing backend modules */}
+          <Route path="classes" element={<ResourcePage title="Class Rooms" description="Manage classes" endpoint="/classes/" kicker="Academics" />} />
+          <Route path="subjects" element={<ResourcePage title="Subjects" description="Manage subjects" endpoint="/subjects/" kicker="Academics" />} />
+          <Route path="assessments" element={<ResourcePage title="Assessments" description="Manage assessments" endpoint="/assessments/" kicker="Academics" />} />
+          <Route path="attendance-sessions" element={<ResourcePage title="Attendance Sessions" description="Manage sessions" endpoint="/attendance-sessions/" kicker="Attendance" />} />
+          <Route path="submissions" element={<ResourcePage title="Submissions" description="Manage assignment submissions" endpoint="/submissions/" kicker="Learning" />} />
+          <Route path="quizzes" element={<ResourcePage title="Quizzes" description="Manage quizzes" endpoint="/quizzes/" kicker="Learning" />} />
+          <Route path="announcements" element={<ResourcePage title="Announcements" description="Manage announcements" endpoint="/announcements/" kicker="Communication" />} />
+          <Route path="notifications" element={<ResourcePage title="Notifications" description="Manage notifications" endpoint="/notifications/" kicker="Communication" />} />
+          <Route path="activity-logs" element={<ResourcePage title="Activity Logs" description="View activity logs" endpoint="/activity-logs/" kicker="Communication" />} />
+          <Route path="pages" element={<ResourcePage title="Pages" description="Manage CMS pages" endpoint="/pages/" kicker="CMS" />} />
+          <Route path="cms-courses" element={<ResourcePage title="Courses" description="Manage CMS courses" endpoint="/courses/" kicker="CMS" />} />
+          <Route path="cms-facilities" element={<ResourcePage title="Facilities" description="Manage CMS facilities" endpoint="/facilities/" kicker="CMS" />} />
+          <Route path="gallery" element={<ResourcePage title="Gallery" description="Manage CMS gallery" endpoint="/gallery/" kicker="CMS" />} />
+          <Route path="contact-messages" element={<ResourcePage title="Contact Messages" description="Manage contact messages" endpoint="/contact-messages/" kicker="CMS" />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Route>
 

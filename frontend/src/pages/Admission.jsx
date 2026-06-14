@@ -2,7 +2,7 @@ import { Send } from "lucide-react";
 import { useState } from "react";
 
 import PageHeader from "../components/PageHeader";
-import { createResource } from "../services/api";
+import { createResource, getErrorMessage } from "../services/api";
 
 const initialForm = {
   student_name: "",
@@ -15,7 +15,7 @@ const initialForm = {
 
 export default function Admission() {
   const [form, setForm] = useState(initialForm);
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState({ type: "", message: "" });
   const [saving, setSaving] = useState(false);
 
   function updateField(event) {
@@ -25,13 +25,13 @@ export default function Admission() {
   async function submit(event) {
     event.preventDefault();
     setSaving(true);
-    setStatus("");
+    setStatus({ type: "", message: "" });
     try {
       await createResource("/inquiries/", form);
       setForm(initialForm);
-      setStatus("Inquiry submitted. The admissions team will contact you.");
+      setStatus({ type: "success", message: "Inquiry submitted. The admissions team will contact you." });
     } catch (error) {
-      setStatus(error.response?.data?.detail || "Unable to submit inquiry right now.");
+      setStatus({ type: "error", message: getErrorMessage(error, "Unable to submit inquiry right now.") });
     } finally {
       setSaving(false);
     }
@@ -82,7 +82,11 @@ export default function Admission() {
             Message
             <textarea className="field min-h-28" name="message" value={form.message} onChange={updateField} />
           </label>
-          {status && <p className="rounded-lg bg-emerald-50 p-3 text-sm font-bold text-emerald-800">{status}</p>}
+          {status.message && (
+            <p className={`rounded-lg p-3 text-sm font-bold ${status.type === 'success' ? 'bg-emerald-50 text-emerald-800' : 'bg-rose-50 text-rose-800'}`}>
+              {status.message}
+            </p>
+          )}
           <button className="btn btn-primary w-fit" type="submit" disabled={saving}>
             <Send size={18} />
             {saving ? "Submitting" : "Submit Inquiry"}

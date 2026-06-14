@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../hooks/useAuth";
+import { getErrorMessage } from "../services/api";
 
 export default function Login() {
   const { login, loading } = useAuth();
@@ -10,6 +11,7 @@ export default function Login() {
   const location = useLocation();
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   function updateField(event) {
     setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
@@ -20,9 +22,12 @@ export default function Login() {
     setError("");
     try {
       await login(form);
-      navigate(location.state?.from?.pathname || "/dashboard", { replace: true });
+      setSuccess(true);
+      setTimeout(() => {
+        navigate(location.state?.from?.pathname || "/dashboard", { replace: true });
+      }, 500);
     } catch (err) {
-      setError(err.response?.data?.detail || "Invalid login credentials.");
+      setError(getErrorMessage(err, "Invalid login credentials. Please check your username/email and password."));
     }
   }
 
@@ -35,8 +40,15 @@ export default function Login() {
             <h1 className="mt-2 text-3xl font-black text-slate-950">Login</h1>
           </div>
           <label className="field-label">
-            Username
-            <input className="field" name="username" value={form.username} onChange={updateField} required />
+            Username or Email
+            <input 
+              className="field" 
+              name="username" 
+              value={form.username} 
+              onChange={updateField} 
+              placeholder="admin or admin@jsmshiksha.local"
+              required 
+            />
           </label>
           <label className="field-label">
             Password
@@ -50,9 +62,10 @@ export default function Login() {
             />
           </label>
           {error && <p className="rounded-lg bg-rose-50 p-3 text-sm font-bold text-rose-700">{error}</p>}
-          <button className="btn btn-primary" type="submit" disabled={loading}>
+          {success && <p className="rounded-lg bg-emerald-50 p-3 text-sm font-bold text-emerald-700">Login successful! Redirecting...</p>}
+          <button className="btn btn-primary" type="submit" disabled={loading || success}>
             <LogIn size={18} />
-            {loading ? "Signing in" : "Login"}
+            {loading ? "Signing in..." : success ? "Authenticated" : "Login"}
           </button>
           <p className="text-center text-sm font-bold text-slate-600">
             New account? <Link className="text-emerald-700" to="/register">Register</Link>

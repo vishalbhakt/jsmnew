@@ -1,10 +1,9 @@
 import heroImage from "../assets/academy-hero.png";
 import PageHeader from "../components/PageHeader";
 import { useResource } from "../hooks/useResource";
-import { gallery } from "../utils/fixtures";
 
 export default function Gallery() {
-  const { rows } = useResource("/gallery/", gallery);
+  const { rows } = useResource("/gallery/");
 
   return (
     <section className="page-band">
@@ -28,6 +27,7 @@ export default function Gallery() {
               </div>
             </article>
           ))}
+          {rows.length === 0 && <p className="text-slate-500">No gallery items available.</p>}
         </div>
       </div>
     </section>
